@@ -1,0 +1,91 @@
+<div id="test-platform" class="page-layout simple right-sidenav" layout="row">
+
+	<div class="center" flex ms-scroll>
+
+		<!-- Header -->
+		<div class="header md-accent-bg" layout="row" layout-align="space-between center">
+			<div layout="row" layout-align="space-between center">
+				<div><span class="md-display-1 font-weight-300">Test Platform</span></div>
+				<test-control invalid="vm.setupForm.$invalid || vm.buildingForm.$invalid" active='vm.testActive' start="vm.startTest()" stop="vm.stopTest()"></test-control>
+			</div>
+		</div>
+		
+		<!-- Content -->
+		<div class="content">
+			<md-tabs md-dynamic-height>
+
+				<md-tab label="SETUP" ng-disabled="vm.testActive">
+					<div class="setup-group" layout-gt-md="row">
+						<div layout="column" flex>
+							<building-details building="vm.building"></building-details>
+							<setup-form settings='vm.settings' change='vm.updateTestStandard()'></setup-form>
+						</div>
+						<fan-details fans='vm.availableFans' refresh='vm.refreshFans()' update='vm.updateEnabledFans' 
+							edit='vm.editFanSettings' devices='vm.data.devices' primary='vm.removePrimaryFan()' flex></fan-details>
+					</div>
+				</md-tab>
+
+				<md-tab label="DASHBOARD">
+					<div class="sensor-widget-group" layout-gt-md="row">
+						<sensor-widget title="Envelope Pressure" value="vm.sensorData.envelopeDP" units="Pa" data="vm.sensorDataArrs.pressure" flex></sensor-widget>
+						<sensor-widget title="Air Leakage" value="vm.sensorData.airFlow" units="CFM" data="vm.sensorDataArrs.flow" flex></sensor-widget>
+						<sensor-widget title="Fan Speed" value="vm.sensorData.fanSpeed" units="Percent" data="vm.sensorDataArrs.speed" flex></sensor-widget>
+					</div>
+
+					<div class="table-chart" layout-gt-md="row">
+						<ms-widget layout="column" flex>
+							<ms-widget-front class="white-bg ph-24 pv-20" layout="column" flex>
+								<div layout="row" layout-align="space-between center">
+		                        	<div class="h2">Data Table</div>
+		                        	<dir-pagination-controls pagination-id="table-pagination"></dir-pagination-controls>
+								</div>
+
+								<div class="simple-table-container" ms-responsive-table flex>
+		                            <table class="simple">
+		                                <thead>
+		                                    <tr>
+		                                        <th ng-repeat="column in vm.dataTable.columns">
+		                                            {{column.title}}
+		                                        </th>
+		                                    </tr>
+		                                </thead>
+
+		                                <tbody>
+		                                    <tr dir-paginate="row in vm.dataTable.rows | itemsPerPage: 5" pagination-id="table-pagination">
+		                                        <td ng-repeat="cell in row">
+		                                            <span class="{{cell.classes}}">
+		                                                {{cell.value}}
+		                                            </span>
+		                                        </td>
+		                                    </tr>
+		                                </tbody>
+		                            </table>
+
+			                        <div ng-show="vm.dataTable.rows.length < 1">
+			                        	<h3>Table will populate as data is collected.</h3>
+			                        </div>
+		                        </div>							
+			                </ms-widget-front>
+						</ms-widget>
+
+						<ms-widget layout="column" flex>
+							<ms-widget-front class="white-bg ph-24 pv-20">
+	                            <div class="h2">Air Leakage vs. Pressure</div>
+
+								<div class="chart-fill-16">
+						            <nvd3 options="vm.chart.options"
+						                  data="vm.chart.data"></nvd3>
+						        </div>
+							</ms-widget-front>
+						</ms-widget>
+					</div>
+				</md-tab>
+
+				<md-tab label="RESULTS">
+				</md-tab>
+
+			</md-tabs>
+		</div>
+		<!-- Content -->
+	</div>
+</div>

@@ -1,0 +1,45 @@
+<!-- Fan Details -->
+<ms-widget layout="column" flex>
+	<ms-widget-front class="white-bg">
+		<div class="ph-16 border-bottom" layout="row" layout-align="space-between center"> 
+			<div class="h3">Available Fans</div>
+
+			<div layout="row" layout-align="space-between center"> 
+				<dir-pagination-controls pagination-id="fan-pagination"></dir-pagination-controls>
+
+				<md-menu>
+				    <md-button class="md-icon-button" ng-click="$mdOpenMenu()"
+				               aria-label="more">
+				        <md-icon md-font-icon="icon-dots-vertical"></md-icon>
+				    </md-button>
+
+				    <md-menu-content width="3">
+				        <md-menu-item>
+				            <md-button ng-click="refresh()" aria-label="Refresh fan list">
+				                Refresh
+				            </md-button>
+				        </md-menu-item>
+				    </md-menu-content>
+				</md-menu>
+			</div>
+		</div>
+
+		<md-list flex ng-show="fans.length >= 1">
+			<md-list-item class="md-3-line" dir-paginate="fan in fans | itemsPerPage: 3" pagination-id="fan-pagination" ng-click="editFanSettings(fan)">
+				<md-icon class="md-accent pv-14" md-font-icon="icon-fan" ng-style="{'font-size': '36px'}"></md-icon>
+				<div class="md-list-item-text" flex>
+					<h3 layout-align="center">{{fan.name}} <span class="text-boxed m-0 md-primary-bg white-fg" ng-show="fan.isPrimary">PRIMARY</span></h3>
+					<p>Model-{{fan.model}} / Range-{{fan.range}}</p>
+				</div>
+				<md-checkbox class="md-secondary" ng-model="fan.enabled" ng-change="updateFans(fan)"></md-checkbox>
+				<md-divider ng-if="!$last"></md-divider>
+			</md-list-item>
+		</md-list>
+
+		<div class="pv-10 ph-16" ng-show="fans.length < 1">
+			<h3>Could not find any fans.</h3>
+			<p>Please make sure the controller module is plugged into the DM32, the VFD is powered up and you are connected to the network. </p>
+		</div>
+	</ms-widget-front>
+</ms-widget>
+<!-- Fan Details -->	

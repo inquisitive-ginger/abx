@@ -1,0 +1,44 @@
+<ng-form class="md-inline-form pv-10 ph-16" name="setupForm" novalidate>
+	<div class="form-title">Edit Fan</div>
+	<div layout="column" flex>
+		<div layout="row">
+			<md-input-container flex>
+				<input type="text" name="fanName" ng-model="fan.name" placeholder="Fan Name" required>
+				<div ng-messages="setupForm.fanName.$error"
+                     role="alert">
+                    <div ng-message="required">
+                        <span>This field is required.</span>
+                    </div>
+                </div>
+			</md-input-container>
+
+			<md-switch ng-model="fan.isPrimary" aria-label="Primary" ng-change="togglePrimary(fan)">
+			    Primary Fan
+			</md-switch>
+		</div>
+
+		<div layout="row">
+			<md-input-container flex>
+				<label>Model</label>
+				<md-select ng-model="fan.model">
+					<md-option ng-repeat="device in devices" value="{{device.model}}" change="updateRanges(device)">
+						{{device.model}}
+					</md-option>
+				</md-select>
+			</md-input-container>
+
+			<md-input-container flex>
+				<label>Range</label>
+				<md-select ng-model="fan.range">
+					<md-option ng-repeat="range in ranges" value="{{range}}">
+						{{range}}
+					</md-option>
+				</md-select>
+			</md-input-container>
+
+			<md-input-container flex>
+				<input type="number" name="avgInterval" ng-model="fan.avgInterval" placeholder="Averaging Interval" required>
+			</md-input-container>
+		</div>
+	</div>
+</ng-form>

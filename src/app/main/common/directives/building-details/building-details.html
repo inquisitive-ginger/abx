@@ -1,0 +1,90 @@
+<!-- Buildings Details -->
+<ms-widget layout="column" flex flippable="true">
+	<ms-widget-front class="white-bg">
+		<div class="ph-16 border-bottom" layout="row" layout-align="space-between center">
+			<div class="h3">Building Details</div>
+			<md-menu>
+			    <md-button class="md-icon-button" ng-click="$mdOpenMenu()"
+			               aria-label="more">
+			        <md-icon md-font-icon="icon-dots-vertical"></md-icon>
+			    </md-button>
+
+			    <md-menu-content width="3">
+			        <md-menu-item>
+			            <md-button ng-click="flipWidget()" aria-label="Advanced settings">
+			                Advanced Settings
+			            </md-button>
+			        </md-menu-item>
+			    </md-menu-content>
+			</md-menu>
+		</div>
+
+		<ng-form class="md-inline-form pv-10 ph-16" name="buildingForm" form-locator novalidate>
+			<div layout="column" flex>
+				<div layout="row">
+					<md-input-container flex>
+						<input type="text" name="buildingName" ng-model="building.name" placeholder="Building Name" required>
+						<div ng-messages="buildingForm.buildingName.$error"
+                             role="alert">
+                            <div ng-message="required">
+                                <span>This field is required.</span>
+                            </div>
+                        </div>
+					</md-input-container>
+
+					<md-input-container flex>
+						<input type="number" name="buildingElevation" ng-model="building.elevation" placeholder="Elevation" required>
+						<div ng-messages="buildingForm.buildingElevation.$error"
+                             role="alert">
+                            <div ng-message="required">
+                                <span>This field is required.</span>
+                            </div>
+                        </div>
+					</md-input-container>
+				</div>
+
+				<div layout="row">
+					<md-input-container flex>
+						<input type="number" name="buildingHeight" ng-model="building.height" placeholder="Height" required>
+						<div ng-messages="buildingForm.buildingHeight.$error" role="alert">
+							<div ng-message="required">
+								<span>This field is required.</span>
+							</div>
+						</div>
+					</md-input-container>
+
+					<md-input-container flex>
+						<input type="number" name="envelopeArea" ng-model="building.envelopeArea" placeholder="Envelope Area" required>
+						<div ng-messages="buildingForm.envelopeArea.$error" role="alert">
+							<div ng-message="required">
+								<span>This field is required.</span>
+							</div>
+						</div>
+					</md-input-container>
+
+					<md-input-container flex>
+						<input type="number" name="envelopeVolume" ng-model="building.numSteps" placeholder="Envelope Volume" required>
+						<div ng-messages="buildingForm.envelopeVolume.$error" role="alert">
+							<div ng-message="required">
+								<span>This field is required.</span>
+							</div>
+						</div>
+					</md-input-container>
+				</div>
+			</div>
+		</ng-form>
+	</ms-widget-front>
+
+	<ms-widget-back class="white-bg ph-16">
+        <div class="flip-to-front">
+            <md-button class="md-icon-button" ng-click="flipWidget()" aria-label="Flip widget">
+                <md-icon md-font-icon="icon-check" class="s16"></md-icon>
+            </md-button>
+        </div>
+
+        <div layout="column" layout-align="center space-bettween" flex>
+        	<h3>Nothing to see here...move along.</h3>
+        </div>
+	</ms-widget-back>
+</ms-widget>
+<!-- Building Details -->	

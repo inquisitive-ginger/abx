@@ -1,0 +1,16 @@
+<div class="toolbar" layout="row" layout-align="start center">
+    <md-button class="md-icon-button md-raised" aria-label="Start Test" ng-disabled="invalid || active" ng-click="start()">
+        <md-icon md-font-icon="icon-play"></md-icon>
+        <md-tooltip><span>Start Test</span></md-tooltip>
+    </md-button>
+
+  <!--   <md-button class="md-icon-button md-raised" aria-label="Pause Test">
+        <md-icon md-font-icon="icon-pause"></md-icon>
+        <md-tooltip><span>Pause Test</span></md-tooltip>
+    </md-button> -->
+
+    <md-button class="md-icon-button  md-raised md-warn md-hue-2" ng-disabled="!active" aria-label="Stop Test" ng-click="stop()">
+        <md-icon md-font-icon="icon-stop"></md-icon>
+        <md-tooltip><span>Stop Test</span></md-tooltip>
+    </md-button>
+</div>

@@ -1,0 +1,24 @@
+<!-- WIDGET 1 -->
+<ms-widget flippable="true" layout="column">
+    <!-- Front -->
+    <ms-widget-front class="md-primary-bg md-hue-3 white-fg">
+        <div class="h3 pl-16 pr-8 pv-16 h-55">{{title}}</div>
+
+        <div class="pt-8 pb-32" layout="column" layout-align="center center">
+            <div class="md-accent-fg md-hue-2 font-size-72 line-height-72">
+                {{value}}
+            </div>
+            <div class="h2 secondary-text font-weight-50">{{units}}</div>
+        </div>
+
+        <div class="chart-fill-16">
+            <nvd3 class="h-60 remove-line-stroke"
+                  config="vm.chart.config"
+                  options="vm.chart.options"
+                  data="vm.chart.data"></nvd3>
+        </div>
+    </ms-widget-front>
+    <!-- / Front -->
+
+</ms-widget>
+<!-- / WIDGET 1 -->

@@ -1,0 +1,113 @@
+<!-- Setup Form -->
+<ms-widget layout="column" flex flippable="true">
+	<ms-widget-front class="white-bg">
+		<div class="ph-16 border-bottom" layout="row" layout-align="space-between center">
+			<div class="h3">Test Details</div>
+			<md-menu>
+			    <md-button class="md-icon-button" ng-click="$mdOpenMenu()"
+			               aria-label="more">
+			        <md-icon md-font-icon="icon-dots-vertical"></md-icon>
+			    </md-button>
+
+			    <md-menu-content width="3">
+			        <md-menu-item>
+			            <md-button ng-click="flipWidget()" aria-label="Advanced settings">
+			                Advanced Settings
+			            </md-button>
+			        </md-menu-item>
+			    </md-menu-content>
+			</md-menu>
+		</div>
+
+		<ng-form class="md-inline-form pv-10 ph-16" name="setupForm" form-locator novalidate>
+			<div layout="column" flex>
+				<div layout="row">
+					<md-input-container flex>
+						<input type="text" name="testName" ng-model="settings.testName" placeholder="Test Name" required>
+						<div ng-messages="setupForm.testName.$error"
+                             role="alert">
+                            <div ng-message="required">
+                                <span>This field is required.</span>
+                            </div>
+                        </div>
+					</md-input-container>
+
+					<md-input-container flex>
+						<label>Test Standard</label>
+						<md-select ng-model="settings.testStandard" ng-change="change()">
+							<md-option ng-repeat="standard in settings.standards" value="{{standard.name}}">
+								{{standard.name}}
+							</md-option>
+						</md-select>
+					</md-input-container>
+				</div>
+
+				<div layout="row">
+					<md-input-container flex>
+						<input type="number" name="startPressure" ng-model="settings.startPressure" placeholder="Start Pressure" required>
+						<div ng-messages="setupForm.startPressure.$error" role="alert">
+							<div ng-message="required">
+								<span>This field is required.</span>
+							</div>
+						</div>
+					</md-input-container>
+
+					<md-input-container flex>
+						<input type="number" name="stopPressure" ng-model="settings.stopPressure" placeholder="Stop Pressure" required>
+						<div ng-messages="setupForm.stopPressure.$error" role="alert">
+							<div ng-message="required">
+								<span>This field is required.</span>
+							</div>
+						</div>
+					</md-input-container>
+
+					<md-input-container flex>
+						<input type="number" name="numSteps" ng-model="settings.numSteps" placeholder="Number of Steps" required>
+						<div ng-messages="setupForm.numSteps.$error" role="alert">
+							<div ng-message="required">
+								<span>This field is required.</span>
+							</div>
+						</div>
+					</md-input-container>
+				</div>
+			</div>
+		</ng-form>
+	</ms-widget-front>
+
+	<ms-widget-back class="white-bg ph-16">
+        <div class="flip-to-front">
+            <md-button class="md-icon-button" ng-click="flipWidget()" aria-label="Flip widget">
+                <md-icon md-font-icon="icon-check" class="s16"></md-icon>
+            </md-button>
+        </div>
+
+        <ng-form class="md-inline-form  pv-10 ph-16" novalidate>
+			<div layout="column">
+				<div class="pv-16" layout="row">
+					<md-input-container flex>
+						<input type="number" name="holdTime" ng-model="settings.holdTime" placeholder="Hold Time" required>
+					</md-input-container>
+
+					<md-input-container flex>
+						<input type="number" name="averagingInterval" ng-model="settings.avgInterval" placeholder="Averaging Interval" required>
+					</md-input-container>
+
+					<md-input-container flex>
+						<input type="number" name="referencePressure" ng-model="settings.refPressure" placeholder="Reference Pressure" required>
+					</md-input-container>
+				</div>
+
+				<div layout="column">
+					<p class="mv-remove secondary-text">Baseline Pressure Measurement</p>
+					<md-radio-group layout-gt-md="row" layout-align="start" ng-model="settings.baselineType">
+						<md-radio-button value="0" class="md-primary">Before/After Test</md-radio-button>
+						<md-radio-button value="1" class="md-primary">Before Test</md-radio-button>
+						<md-radio-button value="2" class="md-primary">Replicate Pressures</md-radio-button>
+						<md-radio-button value="3" class="md-primary">None</md-radio-button>
+					</md-radio-group>
+				</div>
+			</div>
+		</ng-form>
+	</ms-widget-back>
+</ms-widget>
+<!-- Setup Form -->	
