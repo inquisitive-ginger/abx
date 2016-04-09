@@ -23,7 +23,7 @@
 		vm.settings 			= {'standards': TestPlatformData.standards};
 		vm.sensorData			= {};
 		vm.sensorDataArrs 		= {pressure:[], flow:[], speed:[]};
-		vm.socket 				= io('http://localhost:3000/');
+		vm.socket 				= io('http://localhost:3000/api');
 		vm.startTest 			= startTest;
 		vm.stopTest				= stopTest;
 		vm.testActive			= false;
@@ -38,26 +38,28 @@
 			});
 
 			// register test events
-			$rootScope.$on('dataAvailable', processData);
-			$rootScope.$on('tableAvailable', processTable);
-			$rootScope.$on('statusAvailable', processStatus);
+			vm.socket.on('dataAvailable', processData);
+			vm.socket.on('tableAvailable', processTable);
+			vm.socket.on('statusAvailable', processStatus);
 
-			var fanApiBaseUrl = 'http://10.0.0.203:3000/api';
-			msApi.register('fanList', [fanApiBaseUrl + '/fans']);
-			msApi.register('fanConnected', [fanApiBaseUrl + '/fans/:fanid']);
+			var serverApiBaseUrl = 'http://localhost:3000/api';
+			msApi.register('fanList', [serverApiBaseUrl + '/devices']);
 
-			
-
-			vm.socket.on('server-connected', function(data) {
-				toastr.success(data.message);
+			vm.socket.on('connect', function(data) {
+				toastr.success('API Server connected!');
 			});
 
 			refreshAvailableFans();
 
 			vm.socket.on('new-fan', function(fan){
-				toastr.info('There is a new fan called "' + fan.name + '" available. Thought you should know.');
+				toastr.info('"' + fan.name + '"' + ' has been added the the list of available fans.', 'New Fan Avaliable');
 				refreshAvailableFans();
 			});
+
+			vm.socket.on('fan-removed', function(info){
+				toastr.warning('"' + info.name + '"' + ' has been removed from the the list of available fans.', 'Fan Disconnected');
+				refreshAvailableFans();
+			})
 		}
 
 		function updateTestStandard () {
@@ -87,7 +89,7 @@
 					"baseline_type"	: vm.settings.baselineType
 				};
 
-				fanApi.startTest(vm.primaryFan.ip, settings);
+				fanApi.startTest(vm.primaryFan.name, settings);
 				vm.testActive = true;
 
 				// start polling for data
@@ -180,16 +182,13 @@
 		}
 
 		function loadFanList (response) {
-			var fans = response.fans;
+			var fans = response.list;
 
 			fans.forEach(function(fan) {
 				var fanIndex = utils.indexOf(vm.availableFans, 'name', fan.name);
 				if (fanIndex === -1) {
 					fan.enabled = true;
-					fanApi.registerFanEndpoints(fan);
-
-					fanApi.getFanParameters(fan.ip).then(function(response){setFanParams(response, fan)}, 
-						function(response){toastr.warning('Could not get parameters for Fan: ' + fan.name + '. Try refreshing to see if they are available.', 'Oops...')});
+					fanApi.registerFanEndpoints(fan.name);
 
 					vm.availableFans.push(fan);
 					vm.enabledFans.push(fan);
@@ -199,21 +198,8 @@
 						fan.isPrimary = true;
 						vm.primaryFan = fan;
 					}
-				} else if(!vm.availableFans[fanIndex].model || !vm.availableFans[fanIndex].range || !vm.availableFans[fanIndex].coeffs || !vm.availableFans[fanIndex].avgInterval) {
-					fanApi.getFanParameters(vm.availableFans[fanIndex].ip).then(function(response){setFanParams(response, vm.availableFans[fanIndex])}, 
-						function(response){toastr.warning('Could not get parameters for Fan: ' + fan.name + '. Try refreshing to see if they are available.', 'Oops...')});
 				}
 			})
-		}
-
-		function setFanParams (response, fan) {
-			var deviceIndex = utils.indexOf(TestPlatformData.devices, "index", response.fan);
-			var device = TestPlatformData.devices[deviceIndex];
-
-			fan.model 		= device.model;
-			fan.range 		= device.ranges[response.range - 1];
-			fan.coeffs 		= device.coefficients;
-			fan.avgInterval = response.avg_interval;
 		}
 
 		function removePrimaryFan () {

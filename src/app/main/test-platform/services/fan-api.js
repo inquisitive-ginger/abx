@@ -24,43 +24,43 @@
 			return msApi.request('fanList@get');
 		};
 
-		function fanIsConnected(fan) {
-			return msApi.request('fanConnected@get', {'fanid': fan});
+		function fanIsConnected(name) {
+			return msApi.request('fanConnected@get', {'fanName': name});
 		};
 
-		function getDataTable(ip) {
-			return msApi.request('dataTable-' + ip + '@get')
+		function getDataTable(name) {
+			return msApi.request('dataTable-' + name + '@get')
 		};
 
-		function getFanData(ip) {
-			return msApi.request('fanSensors-' + ip + '@get');
+		function getFanData(name) {
+			return msApi.request('fanSensors-' + name + '@get');
 		};
 
-		function getTestStatus(ip) {
-			return msApi.request('testStatus-' + ip + '@get')
+		function getTestStatus(name) {
+			return msApi.request('testStatus-' + name + '@get')
 		};
 
-		function getFanParameters(ip) {
-			return msApi.request('fanParams-' + ip + '@get');
+		function getFanParameters(name) {
+			return msApi.request('fanParams-' + name + '@get');
 		};
 
-		function startTest(ip, settings) {
-			return msApi.request('startTest-' + ip + '@save', settings);
+		function startTest(name, settings) {
+			return msApi.request('startTest-' + name + '@save', settings);
 		}
 
-		function stopTest(ip) {
-			return msApi.request('stopTest-' + ip + '@save');
+		function stopTest(name) {
+			return msApi.request('stopTest-' + name + '@save');
 		}
 
-		function registerFanEndpoints(fan) {
-			var baseUrl = 'http://' + fan.ip + ':3000/api';
-			msApi.register('fanParams-' + fan.ip, [baseUrl + '/parameters']);
-			msApi.register('fanCommand-' + fan.ip, [baseUrl + '/command']);
-			msApi.register('fanSensors-' + fan.ip, [baseUrl + '/sensors']);
-			msApi.register('startTest-' + fan.ip, [baseUrl + '/test/start']);
-			msApi.register('stopTest-' + fan.ip, [baseUrl + '/test/stop']);
-			msApi.register('dataTable-' + fan.ip, [baseUrl + '/test/table']);
-			msApi.register('testStatus-' + fan.ip, [baseUrl + '/test/status']);
+		function registerFanEndpoints(name) {
+			var baseUrl = 'http://localhost:3000/dm32/api';
+			msApi.register('fanParams-' + name, [baseUrl + '/parameters']);
+			msApi.register('fanCommand-' + name, [baseUrl + '/command']);
+			msApi.register('fanSensors-' + name, [baseUrl + '/sensors']);
+			msApi.register('startTest-' + name, [baseUrl + '/test/start']);
+			msApi.register('stopTest-' + name, [baseUrl + '/test/stop']);
+			msApi.register('dataTable-' + name, [baseUrl + '/test/table']);
+			msApi.register('testStatus-' + name, [baseUrl + '/test/status']);
 		}
 	}
 })();
