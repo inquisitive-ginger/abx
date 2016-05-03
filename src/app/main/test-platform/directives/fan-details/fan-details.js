@@ -14,13 +14,15 @@
 				refresh: '&',
 				update: '&',
 				edit: '&',
-				devices: '=',
 				primary: '&'
 			},
-			controller: function($scope, $mdDialog, utils){
-				var devices = $scope.devices;
-				var deletePrimary = $scope.primary;
-				var updateFans = $scope.update();
+			controller: function($scope, $mdDialog, utils, msApi, fanApi){
+				var deletePrimary 	= $scope.primary;
+				var updateFans 		= $scope.update();
+				var devices 		= [];
+
+				msApi.register('deviceList', ['http://192.168.1.212:3000/api/devices/type']);
+				fanApi.getDeviceList().then(function(response){devices = response.list});
 
 				$scope.updateFans = function(fan){
 					$scope.update()(fan);
@@ -41,7 +43,7 @@
 							}
 
 							$scope.togglePrimary = function (fan){
-								if (!fan.isPrimary) {
+								if (fan.isPrimary) {
 									deletePrimary();
 								} else {
 									updateFans(fan);

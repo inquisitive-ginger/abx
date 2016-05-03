@@ -10,7 +10,6 @@
             'app.core',
             'app.navigation',
             'app.toolbar',
-            'app.quick-panel',
             'app.logger',
             'app.test-platform',
 

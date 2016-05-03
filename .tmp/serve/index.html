@@ -23,8 +23,8 @@
         <!-- endinject -->
         <!-- endbuild -->
 
-        <link href='//fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,400italic,500,500italic,700italic,700,900,900italic'
-              rel='stylesheet' type='text/css'>
+        <!--    <link href='//fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,400italic,500,500italic,700italic,700,900,900italic'
+           rel='stylesheet' type='text/css'> -->
 
     </head>
 
@@ -92,21 +92,18 @@
 
         <!-- build:js({.tmp/serve,.tmp/partials,src}) scripts/app.js -->
         <!-- inject:js -->
-        <script src="app/main/test-platform/test-platform.module.js"></script>
-        <script src="app/main/test-platform/directives/test-control/test-control.js"></script>
-        <script src="app/main/test-platform/directives/setup-form/setup-form.js"></script>
-        <script src="app/main/test-platform/directives/sensor-widget/sensor-widget.js"></script>
-        <script src="app/main/test-platform/directives/fan-details/fan-details.js"></script>
         <script src="app/index.module.js"></script>
         <script src="app/main/common/directives/building-details/building-details.js"></script>
-        <script src="app/quick-panel/quick-panel.module.js"></script>
-        <script src="app/quick-panel/tabs/chat/chat-tab.controller.js"></script>
+        <script src="app/main/test-platform/test-platform.module.js"></script>
+        <script src="app/main/test-platform/directives/setup-form/setup-form.js"></script>
+        <script src="app/main/test-platform/directives/sensor-widget/sensor-widget.js"></script>
+        <script src="app/main/test-platform/directives/test-control/test-control.js"></script>
+        <script src="app/main/test-platform/directives/fan-details/fan-details.js"></script>
+        <script src="app/main/test-platform/services/resultCalculator.js"></script>
         <script src="app/main/test-platform/services/fan-api.js"></script>
-        <script src="app/main/test-platform/services/calcs.js"></script>
-        <script src="app/main/test-platform/services/auto-test.js"></script>
+        <script src="app/main/common/directives/form-locator.js"></script>
         <script src="app/main/common/services/utils.js"></script>
         <script src="app/main/common/services/logger.js"></script>
-        <script src="app/main/common/directives/form-locator.js"></script>
         <script src="app/core/core.module.js"></script>
         <script src="app/core/directives/ms-widget/ms-widget.directive.js"></script>
         <script src="app/core/directives/ms-timeline/ms-timeline.js"></script>
@@ -119,11 +116,12 @@
         <script src="app/core/directives/ms-random-class/ms-random-class.directive.js"></script>
         <script src="app/core/directives/ms-navigation/ms-navigation.directive.js"></script>
         <script src="app/core/directives/ms-nav/ms-nav.directive.js"></script>
-        <script src="app/core/directives/ms-material-color-picker/ms-material-color-picker.directive.js"></script>
         <script src="app/core/directives/ms-form-wizard/ms-form-wizard.directive.js"></script>
-        <script src="app/core/directives/ms-card/ms-card.directive.js"></script>
+        <script src="app/core/directives/ms-material-color-picker/ms-material-color-picker.directive.js"></script>
         <script src="app/core/directives/ms-datepicker-fix/ms-datepicker-fix.directive.js"></script>
+        <script src="app/core/directives/ms-card/ms-card.directive.js"></script>
         <script src="app/main/test-platform/test-platform.controller.js"></script>
+        <script src="app/core/theme-options/theme-options.directive.js"></script>
         <script src="app/core/theming/fuse-theming.provider.js"></script>
         <script src="app/core/theming/fuse-theming.config.js"></script>
         <script src="app/core/theming/fuse-themes.constant.js"></script>
@@ -132,17 +130,15 @@
         <script src="app/core/services/ms-utils.service.js"></script>
         <script src="app/core/services/ms-api.provider.js"></script>
         <script src="app/core/services/api-resolver.service.js"></script>
-        <script src="app/core/theme-options/theme-options.directive.js"></script>
-        <script src="app/core/directives/highlight.directive.js"></script>
         <script src="app/core/filters/tag.filter.js"></script>
         <script src="app/core/filters/basic.filter.js"></script>
+        <script src="app/core/directives/highlight.directive.js"></script>
         <script src="app/core/config/fuse-config.provider.js"></script>
         <script src="app/toolbar/toolbar.module.js"></script>
         <script src="app/toolbar/toolbar.controller.js"></script>
-        <script src="app/quick-panel/quick-panel.controller.js"></script>
+        <script src="app/main/main.controller.js"></script>
         <script src="app/navigation/navigation.module.js"></script>
         <script src="app/navigation/navigation.controller.js"></script>
-        <script src="app/main/main.controller.js"></script>
         <script src="app/core/core.run.js"></script>
         <script src="app/core/core.config.js"></script>
         <script src="app/index.run.js"></script>

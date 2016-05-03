@@ -5,13 +5,12 @@
 		.module('app.test-platform')
 		.controller('TestPlatformController', TestPlatformController);
 
-	function TestPlatformController ($rootScope, TestPlatformData, utils, fanApi, msApi, autoTest, calcs, $mdDialog) {
+	function TestPlatformController ($rootScope, TestPlatformData, utils, fanApi, msApi, resultCalculator, $mdDialog) {
 		var vm = this;
 
 		vm.availableFans		= [];
 		vm.building 			= {};
 		vm.chartData 		 	= [];
-		vm.chart 				= {options: getChartOptions(), data:[{key:"Air Flow", values:vm.chartData}]};
 		vm.data 				= TestPlatformData;
 		vm.dataTable 			= TestPlatformData.table;
 		vm.resultsInputTable	= [];
@@ -21,9 +20,8 @@
 		vm.refreshFans			= refreshAvailableFans;
 		vm.removePrimaryFan		= removePrimaryFan;
 		vm.settings 			= {'standards': TestPlatformData.standards};
-		vm.sensorData			= {};
 		vm.sensorDataArrs 		= {pressure:[], flow:[], speed:[]};
-		vm.socket 				= io('http://localhost:3000/api');
+		vm.socket 				= io('http://192.168.1.212:3000/api');
 		vm.startTest 			= startTest;
 		vm.stopTest				= stopTest;
 		vm.testActive			= false;
@@ -33,23 +31,21 @@
 
 		function initialize (msApi){
 			$rootScope.$on('formLocator', function(event){
-				event.targetScope.setupForm && (vm.setupForm = event.targetScope.setupForm);
+				event.targetScope.setupForm	&& (vm.setupForm = event.targetScope.setupForm);
 				event.targetScope.buildingForm && (vm.buildingForm = event.targetScope.buildingForm);
 			});
 
 			// register test events
 			vm.socket.on('dataAvailable', processData);
-			vm.socket.on('tableAvailable', processTable);
-			vm.socket.on('statusAvailable', processStatus);
+			vm.socket.on('statusUpdate', updateStatus);
+			vm.socket.on('connect', function(data) { toastr.success('API Server connected!');});
 
-			var serverApiBaseUrl = 'http://localhost:3000/api';
-			msApi.register('fanList', [serverApiBaseUrl + '/devices']);
+			vm.socket.on('sendIP', function(data) {
+				var serverApiBaseUrl = 'http://' + data.ip + ':3000/api';
+				msApi.register('connectedFanList', [serverApiBaseUrl + '/devices/connected']);
 
-			vm.socket.on('connect', function(data) {
-				toastr.success('API Server connected!');
-			});
-
-			refreshAvailableFans();
+				refreshAvailableFans();
+			})
 
 			vm.socket.on('new-fan', function(fan){
 				toastr.info('"' + fan.name + '"' + ' has been added the the list of available fans.', 'New Fan Avaliable');
@@ -59,7 +55,7 @@
 			vm.socket.on('fan-removed', function(info){
 				toastr.warning('"' + info.name + '"' + ' has been removed from the the list of available fans.', 'Fan Disconnected');
 				refreshAvailableFans();
-			})
+			});
 		}
 
 		function updateTestStandard () {
@@ -79,6 +75,13 @@
 			if (vm.enabledFans.length < 1 || _.isEmpty(vm.primaryFan)) {
 				toastr.error('You need to have at least one fan that is enabled and designated as \'Primary\'', 'Oops...');
 			} else {
+				// initialize empty data containers
+				vm.sensorData 		= {};
+				vm.sensorDataArrs 	= {pressure:[], flow:[], speed:[]};
+				vm.chartData 		= [];
+				vm.chart 			= {options: getChartOptions(), data:[{key:"Air Flow", values:vm.chartData}]};
+				vm.dataTable.rows 	= [];	
+
 				var settings = {
 					"start_pressure": vm.settings.startPressure,
 					"stop_pressure"	: vm.settings.stopPressure,
@@ -91,27 +94,14 @@
 
 				fanApi.startTest(vm.primaryFan.name, settings);
 				vm.testActive = true;
-
-				// start polling for data
-				vm.sensorDataPoll 	= autoTest.dataInterval(vm.primaryFan, 1000);
-				vm.dataTablePoll 	= autoTest.tableInterval(vm.primaryFan, 2000);
-				vm.statusPoll 		= autoTest.statusInterval(vm.primaryFan, 1000);
-				vm.startTime 		= Date.now();
+				vm.startTime = Date.now();
 			}
 		}
 
 		function stopTest(sendApi) {
 			if (vm.testActive) {
-				fanApi.stopTest(vm.primaryFan.ip);
+				fanApi.stopTest(vm.primaryFan.name);
 				vm.testActive = false;
-
-				// stop test polls
-				setTimeout(function(){
-					clearInterval(vm.sensorDataPoll);
-					clearInterval(vm.dataTablePoll);
-					clearInterval(vm.statusPoll);
-				}, 1000);
-				
 				vm.stopTime = Date.now();
 			}
 
@@ -122,8 +112,6 @@
 				"envArea": vm.building.envelopeArea
 			};
 
-			console.log(vm.resultsInputTable);
-
 			calcs.getResults(resPackage).then(
 				function(response) {
 					$mdDialog.show(
@@ -132,8 +120,6 @@
 					        .textContent(response.results)
 					        .ok('Nice')
 				    );
-
-				    console.log(response.results);
 				},
 				function(response) {
 					toastr.warning('Could not get test results.', 'Dang...');
@@ -142,7 +128,7 @@
 		}
 
 		function refreshAvailableFans () {
-			fanApi.getFanList().then(loadFanList, function(response){vm.availableFans = []});
+			fanApi.getConnectedFanList().then(loadFanList, function(response){vm.availableFans = []});
 		}
 
 		function updateEnabledFans (fan) {
@@ -207,65 +193,63 @@
 			toastr.warning('Removing primary fan, please make sure one is designated prior to starting a test.', 'You better know what you\'re doing');
 		}
 
-		function processData(event, data){
+		function processData(data){
 			vm.sensorData = data;
 
 			var seconds = Math.round((Date.now() - vm.startTime)/1000);
-			vm.sensorDataArrs.pressure.push({"x": seconds, "y": data.envelopeDP});
-			vm.sensorDataArrs.flow.push({"x": seconds, "y": data.airFlow});
-			vm.sensorDataArrs.speed.push({"x": seconds, "y": data.fanSpeed});
+			vm.sensorDataArrs.pressure.push({"x": seconds, "y": vm.sensorData.envelopeDP});
+			vm.sensorDataArrs.flow.push({"x": seconds, "y": vm.sensorData.airFlow});
+			vm.sensorDataArrs.speed.push({"x": seconds, "y": vm.sensorData.fanSpeed});
+
+			$rootScope.$apply();
+
+			// add point to table if capture flag is true
+			vm.sensorData.capture && updateTable(vm.sensorData);
 		}
 
-		function processTable(event, table) {
-			// add new point if available
-			if (table.length > vm.dataTable.rows.length) {
-				var newData = table[table.length - 1];
-				newData.cfm = calcs.cfm(newData.envelope_dp, newData.fan_dp, vm.primaryFan.coeffs[vm.primaryFan.range]);
-				var row = [
-					{
-						"value": vm.primaryFan.name,
-						"classes": "text-boxed m-0 blue-grey-900-bg white-fg",
-						"icon": ""
-					},
-					{
-						"value": newData.target_pressure,
-						"classes": "text-bold",
-						"icon": ""
-					},
-					{
-						"value": newData.envelope_dp,
-						"classes": "",
-						"icon": ""
-					},
-					{
-						"value": newData.cfm,
-						"classes": "",
-						"icon": ""
-					},
-					{
-						"value": newData.fan_speed,
-						"classes": "",
-						"icon": ""
-					}
+		function updateTable(point) {
+			// add new point 
+			var row = [
+				{
+					"value": vm.primaryFan.name,
+					"classes": "text-boxed m-0 blue-grey-900-bg white-fg",
+					"icon": ""
+				},
+				{
+					"value": point.target,
+					"classes": "text-bold",
+					"icon": ""
+				},
+				{
+					"value": point.envelopeDP,
+					"classes": "",
+					"icon": ""
+				},
+				{
+					"value": point.airFlow,
+					"classes": "",
+					"icon": ""
+				},
+				{
+					"value": point.fanSpeed,
+					"classes": "",
+					"icon": ""
+				}
 
-				];
+			];
 
-				console.log(row);
-
-				vm.dataTable.rows.push(row);
-				vm.resultsInputTable.push([newData.envelope_dp, newData.cfm]);
-				vm.chartData.push({"x":newData.envelope_dp, "y":newData.cfm});
-			}
+			vm.dataTable.rows.push(row);
+			vm.chartData.push({"x":point.envelopeDP, "y":point.airFlow});
 		}
 
-		function processStatus(event, status) {
-			if (vm.currentStatus !== status[0]) {
-				vm.currentStatus = status[0];
-				toastr.info(status[0]);
+		function updateStatus(status) {
+			if (vm.currentStatus !== status.message) {
+				vm.currentStatus = status.message;
+				toastr.info(status.message);
 
-				if (!status[1] && status[0] !== 'Test completed. That was pretty fun huh?') {
+				if (!status.active && status.message !== 'Test completed. That was pretty fun huh?') {
 					toastr.error('Something went wrong. Shutting down so things don\'t blow up', 'Yikes!');
-				} else if(!status[1]) {
+				} else if(!status.active) {
 					stopTest();
 				}
 			}

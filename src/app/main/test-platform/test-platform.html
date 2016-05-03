@@ -6,7 +6,7 @@
 		<div class="header md-accent-bg" layout="row" layout-align="space-between center">
 			<div layout="row" layout-align="space-between center">
 				<div><span class="md-display-1 font-weight-300">Test Platform</span></div>
-				<test-control invalid="vm.setupForm.$invalid || vm.buildingForm.$invalid" active='vm.testActive' start="vm.startTest()" stop="vm.stopTest()"></test-control>
+				<test-control invalid="vm.setupForm.$invalid" active='vm.testActive' start="vm.startTest()" stop="vm.stopTest()"></test-control>
 			</div>
 		</div>
 		
@@ -21,7 +21,7 @@
 							<setup-form settings='vm.settings' change='vm.updateTestStandard()'></setup-form>
 						</div>
 						<fan-details fans='vm.availableFans' refresh='vm.refreshFans()' update='vm.updateEnabledFans' 
-							edit='vm.editFanSettings' devices='vm.data.devices' primary='vm.removePrimaryFan()' flex></fan-details>
+							edit='vm.editFanSettings' devices='vm.deviceTypeList' primary='vm.removePrimaryFan()' flex></fan-details>
 					</div>
 				</md-tab>
 
